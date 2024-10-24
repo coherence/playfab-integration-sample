@@ -1,0 +1,2 @@
+Assets/PlayFabPartySDK/Source/DLLs/Apple/macOS/PlayFabPartyMacOS.bundle/Contents/MacOS/PlayFabPartyMacOS filter=lfs diff=lfs merge=lfs -text
+Assets/PlayFabPartySDK/Source/DLLs/Linux/libparty.so filter=lfs diff=lfs merge=lfs -text

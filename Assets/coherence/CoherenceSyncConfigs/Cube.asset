@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 579f4a509fd2f994fa391c0c78ea3f11, type: 3}
+  m_Name: Cube
+  m_EditorClassIdentifier: 
+  id: 38f1049a72ecb554aa7e8945dd60b8b0
+  selfId: b5e24b7a44a4eee4eb78cd407cf31b6d
+  editorTarget: {fileID: 2788478255849533690, guid: 38f1049a72ecb554aa7e8945dd60b8b0, type: 3}
+  includeInSchema: 1
+  objectProvider:
+    rid: 5098275440582721804
+  objectInstantiator:
+    rid: 5098275440582721805
+  references:
+    version: 2
+    RefIds:
+    - rid: 5098275440582721804
+      type: {class: DirectReferenceProvider, ns: Coherence.Toolkit, asm: Coherence.Toolkit}
+      data:
+        prefab: {fileID: 2788478255849533690, guid: 38f1049a72ecb554aa7e8945dd60b8b0, type: 3}
+    - rid: 5098275440582721805
+      type: {class: DefaultInstantiator, ns: Coherence.Toolkit, asm: Coherence.Toolkit}
+      data: 
