@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Coherence.Cloud;
 using Coherence.Log;
-using Coherence.Toolkit;
 using Coherence.Toolkit.Relay;
 using PartyCSharpSDK;
 using PlayFab.Party;
@@ -28,12 +26,13 @@ public class PlayFabRelay : IRelay
     public void Open()
     {
         _playFabMultiplayerManager = PlayFabMultiplayerManager.Get();
-        _playFabMultiplayerManager.CreateAndJoinNetwork(new PlayFabNetworkConfiguration()
-        {
-            DirectPeerConnectivityOptions = _connectivityOptions,
-            MaxPlayerCount = 4
-        });
         
+        if (_playFabMultiplayerManager.State != PlayFabMultiplayerManagerState.ConnectedToNetwork)
+        {
+            _logger.Error("Must be connected to a PlayFab Network to open relay.");
+            return;
+        }
+
         _playFabMultiplayerManager.OnRemotePlayerJoined += OnRemotePlayerJoined;
         _playFabMultiplayerManager.OnRemotePlayerLeft += OnRemotePlayerLeft;
         _playFabMultiplayerManager.OnDataMessageNoCopyReceived += OnDataMessageNoCopyReceived;

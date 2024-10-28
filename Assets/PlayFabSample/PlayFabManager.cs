@@ -16,6 +16,7 @@ using UnityEngine.UI;
 
 namespace PlayFabSample
 {
+    [DefaultExecutionOrder(-100)]
     public class PlayFabManager : MonoBehaviour
     {
         [Tooltip("Copy paste your Title ID from https://developer.playfab.com/")]
@@ -60,6 +61,29 @@ namespace PlayFabSample
         {
             StartReplicationServer();
             
+            var playFabMultiplayerManager = PlayFabMultiplayerManager.Get();
+            playFabMultiplayerManager.OnNetworkJoined += OnHostNetworkJoined;
+            playFabMultiplayerManager.OnError += OnNetworkError;
+       
+            playFabMultiplayerManager.CreateAndJoinNetwork(new PlayFabNetworkConfiguration()
+            {
+                DirectPeerConnectivityOptions = ConnectivityOptions,
+                MaxPlayerCount = 4
+            });
+        }
+
+        private void OnNetworkError(object sender, PlayFabMultiplayerManagerErrorArgs args)
+        {
+            if (bridge.IsConnected)
+            {
+                bridge.Disconnect();
+                PlayFabMultiplayerManager.Get().OnNetworkJoined -= OnHostNetworkJoined;
+                PlayFabMultiplayerManager.Get().OnError -= OnNetworkError;
+            }
+        }
+
+        private void OnHostNetworkJoined(object sender, string networkid)
+        {
             // Init PlayFab Relay
             bridge.SetRelay(new PlayFabRelay(ConnectivityOptions));
 
