@@ -25,7 +25,7 @@ namespace PlayFabSample
         [Tooltip("PlayFab P2P/Relay Connectivity Options")]
         public PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS ConnectivityOptions = PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_PLATFORM_TYPE | 
                                                                             PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_ENTITY_LOGIN_PROVIDER;
-
+        
         public TMP_InputField NetworkId;
         public TMP_InputField HostId;
         public Button HostButton;
@@ -64,6 +64,8 @@ namespace PlayFabSample
             var playFabMultiplayerManager = PlayFabMultiplayerManager.Get();
             playFabMultiplayerManager.OnNetworkJoined += OnHostNetworkJoined;
             playFabMultiplayerManager.OnError += OnNetworkError;
+            
+            Debug.Log($"Started Replication Server. Creating PlayFab Network...");
        
             playFabMultiplayerManager.CreateAndJoinNetwork(new PlayFabNetworkConfiguration()
             {
@@ -84,6 +86,7 @@ namespace PlayFabSample
 
         private void OnHostNetworkJoined(object sender, string networkid)
         {
+            Debug.Log($"Created PlayFab Network: {networkid}. Connecting to Replication Server...");
             // Init PlayFab Relay
             bridge.SetRelay(new PlayFabRelay(ConnectivityOptions));
 
@@ -110,6 +113,8 @@ namespace PlayFabSample
                 throw new Exception("PlayFab Title ID is not set.");
             }
             
+            InitializePlayFab();
+            
             bridge.onConnected.AddListener(OnConnected);
             bridge.onDisconnected.AddListener(OnDisconnected);
             HostButton.onClick.AddListener(HostGame);
@@ -119,7 +124,6 @@ namespace PlayFabSample
             PlayFabMultiplayerManager.Get().OnNetworkJoined += OnOnNetworkJoined;
             
             InitEndpoint();
-            InitializePlayFab();
         }
 
         private void OnOnNetworkJoined(object sender, string networkId)
@@ -179,6 +183,7 @@ namespace PlayFabSample
 
         private void OnLoggedIn(LoginResult loginResult)
         {
+            Debug.Log($"Logged in with PlayFab: {loginResult.PlayFabId}");
             PreGameContainer.SetActive(true);
             PlayFabMultiplayerManager.Get().LocalPlayer.IsMuted = true;
         }
