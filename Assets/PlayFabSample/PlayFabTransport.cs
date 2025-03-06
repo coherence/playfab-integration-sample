@@ -19,6 +19,7 @@ public class PlayFabTransport : ITransport
     public bool IsReliable => false;
     public bool CanSend => true;
     public int HeaderSize { get; }
+    public string Description => "PlayFabTransport";
 
     private PlayFabMultiplayerManager _playFabMultiplayerManager;
     private List<PlayFabPlayer> host;
@@ -35,7 +36,7 @@ public class PlayFabTransport : ITransport
         this.networkId = networkId;
         this.hostId = hostId;
         _playFabMultiplayerManager = PlayFabMultiplayerManager.Get();
-        _logger = logger;
+        _logger = logger.With<PlayFabTransport>();
     }
     
     public void Open(EndpointData _, ConnectionSettings __)
@@ -117,7 +118,7 @@ public class PlayFabTransport : ITransport
         var sendType = isClosing ? DeliveryOption.Guaranteed : DeliveryOption.BestEffort;
 
         var buffer = data.Close();
-        var result = _playFabMultiplayerManager.SendDataMessage(buffer.Array, host, sendType);
+        var result = _playFabMultiplayerManager.SendDataMessage(buffer.ToArray(), host, sendType);
         
         if (!result)
         {
