@@ -10,9 +10,8 @@ using PartyCSharpSDK;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.Party;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace PlayFabSample
 {
@@ -25,21 +24,17 @@ namespace PlayFabSample
         [Tooltip("PlayFab P2P/Relay Connectivity Options")]
         public PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS ConnectivityOptions = PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_PLATFORM_TYPE | 
                                                                             PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_ENTITY_LOGIN_PROVIDER;
-        
-        public TMP_InputField NetworkId;
-        public TMP_InputField HostId;
-        public Button HostButton;
-        public Button JoinButton;
-        public GameObject PreGameContainer;
-        public GameObject InGameContainer;
-        public TextMeshProUGUI InGameNetworkId;
-        public TextMeshProUGUI InGameHostId;
-        public Button CopyNetworkIdButton;
-        public Button CopyHostIdButton;
+
+        public UnityAction Connected;
+        public UnityAction Disconnected;
+        public UnityAction LoggedIn;
+        public UnityAction<string> NetworkJoined;
 
         private CoherenceBridge bridge;
         private IReplicationServer replicationServer;
         private EndpointData endpointData;
+        
+        public bool HasReplicationServer => replicationServer != null;
 
         public void JoinGame(string networkId, string hostId)
         {
@@ -100,8 +95,6 @@ namespace PlayFabSample
 
         private void Awake()
         {
-            PreGameContainer.SetActive(false);
-            InGameContainer.SetActive(false);
             // Make sure the scene contains a CoherenceBridge
             if (!CoherenceBridgeStore.TryGetBridge(gameObject.scene, out bridge))
             {
@@ -114,34 +107,17 @@ namespace PlayFabSample
             }
             
             InitializePlayFab();
-            
-            bridge.onConnected.AddListener(OnConnected);
-            bridge.onDisconnected.AddListener(OnDisconnected);
-            HostButton.onClick.AddListener(HostGame);
-            JoinButton.onClick.AddListener(() => JoinGame(NetworkId.text, HostId.text));
-            CopyNetworkIdButton.onClick.AddListener(() => GUIUtility.systemCopyBuffer = InGameNetworkId.text);
-            CopyHostIdButton.onClick.AddListener(() => GUIUtility.systemCopyBuffer = InGameHostId.text);
-            PlayFabMultiplayerManager.Get().OnNetworkJoined += OnOnNetworkJoined;
+
+            bridge.onConnected.AddListener(_ => Connected?.Invoke());
+            bridge.onDisconnected.AddListener((_, _) => Disconnected?.Invoke());
+            PlayFabMultiplayerManager.Get().OnNetworkJoined += (_, networkId) => NetworkJoined?.Invoke(networkId);
             
             InitEndpoint();
         }
 
-        private void OnOnNetworkJoined(object sender, string networkId)
+        private void OnDestory()
         {
-            InGameNetworkId.text = networkId;
-            InGameHostId.text = replicationServer != null ? PlayFabMultiplayerManager.Get().LocalPlayer.EntityKey.Id : HostId.text;
-        }
-
-        private void OnDisconnected(CoherenceBridge _, ConnectionCloseReason __)
-        {
-            InGameContainer.SetActive(false);
-            PreGameContainer.SetActive(true);
-        }
-
-        private void OnConnected(CoherenceBridge _)
-        {
-            InGameContainer.SetActive(true);
-            PreGameContainer.SetActive(false);
+            StopReplicationServer();
         }
 
         private void InitEndpoint()
@@ -184,8 +160,8 @@ namespace PlayFabSample
         private void OnLoggedIn(LoginResult loginResult)
         {
             Debug.Log($"Logged in with PlayFab: {loginResult.PlayFabId}");
-            PreGameContainer.SetActive(true);
             PlayFabMultiplayerManager.Get().LocalPlayer.IsMuted = true;
+            LoggedIn?.Invoke();
         }
         
         private void StartReplicationServer()
@@ -206,6 +182,7 @@ namespace PlayFabSample
                 ReceiveFrequency = 60,
                 Token = RuntimeSettings.Instance.ReplicationServerToken,
                 DisableThrottling = true,
+                AutoShutdownTimeout = 10000 // 10 seconds in milliseconds
             };
 
             var consoleLogDir = Path.GetDirectoryName(Application.consoleLogPath);
@@ -218,7 +195,7 @@ namespace PlayFabSample
 
         private void StopReplicationServer()
         {
-            replicationServer.Stop();
+            replicationServer?.Stop();
             replicationServer = null;
         }
 
