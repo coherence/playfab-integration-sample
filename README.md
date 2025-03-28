@@ -17,14 +17,17 @@ The `ICoherenceRelay` implementation allows for users to connect to the hosting 
 ## How to use in your own project
 
 1. In Project Settings > Player, check the "Allow 'unsafe' Code" tick box. The PlayFab Party SDK requires unsafe code to function.
+
     ![Allow 'unsafe' code to run](.github/images/allow-unsafe-code.png)
 1. Install the [PlayFab Party SDK](https://learn.microsoft.com/en-us/gaming/playfab/features/multiplayer/networking/party-sdks) Unity Package using the instructions on the page to install the correct version for your platform. This package includes the "PlayFabSDK".
 1. In the scene containing your CoherenceBridge GameObject/Component, drag and drop the "PlayFabMultiplayerManager" prefab from the "Assets/PlayFabPartySDK/Prefabs" folder onto the scene.
 1. Copy the "PlayFabSample" folder into your own project.
 1. In the scene containing your CoherenceBridge GameObject/Component, create a new GameObject with the `PlayFabManager` Component from the "PlayFabSample" folder.
 1. Use the Inspector with the `PlayFabManager` to set the Play Fab Title Id to the Id of your project.
+
     ![PlayFabManager's Play Fab Title Id field](.github/images/playfabmanager-titleid.png)
-1. (Optional) Add the "PlayfabConnectionUI" prefab to the scene from the "Assets/PlayFabSample/Prefabs" folder. If you don't have an Event System in your scene, create one by clicking Game Object > UI > Event System on the Unity menu bar. The UI can be used to host or join a game. After joining a game the Host and Network IDs are shown and can be copied to the clipboard. 
+1. (Optional) Add the "PlayfabConnectionUI" prefab to the scene from the "Assets/PlayFabSample/Prefabs" folder. If you don't have an Event System in your scene, create one by clicking Game Object > UI > Event System on the Unity menu bar. The UI can be used to host or join a game. After joining a game the Host and Network IDs are shown and can be copied to the clipboard.
+
     ![Host/Join Game UI](.github/images/host-join-game.png)
 
     ![In-Game UI showing the Host and Network IDs. IDs have been blurred.](.github/images/loggedin-ui.png)
