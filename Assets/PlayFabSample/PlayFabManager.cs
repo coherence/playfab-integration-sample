@@ -114,12 +114,7 @@ namespace PlayFabSample
             
             InitEndpoint();
         }
-
-        private void OnDestory()
-        {
-            StopReplicationServer();
-        }
-
+        
         private void InitEndpoint()
         {
             endpointData = new EndpointData
@@ -212,10 +207,7 @@ namespace PlayFabSample
         
         private void OnDestroy()
         {
-            if (replicationServer != null)
-            {
-                replicationServer.Stop();
-            }
+            StopReplicationServer();
         }
     }
 }

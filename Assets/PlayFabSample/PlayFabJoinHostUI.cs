@@ -64,10 +64,4 @@ public class PlayFabJoinHostUI : MonoBehaviour
                 : HostId.text;
         };
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
