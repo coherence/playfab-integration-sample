@@ -993,7 +993,7 @@ namespace Coherence.Generated
                 case InternalGenericFieldColor1:
                     return GenericFieldColor1.Serialize((GenericFieldColor1)data, isRefSimFrameValid, referenceSimulationFrame, protocolStream, logger);
                 default:
-                    logger.Error("Missing serialization implementation for a component.", ("component", data.GetComponentType()));
+                    logger.Error(Coherence.Log.Error.DefinitionMissingComponentImplementation, ("component", data.GetComponentType()));
                     return 0;
             }
         }
@@ -1107,7 +1107,7 @@ namespace Coherence.Generated
                     GenericCommand.Serialize((GenericCommand)data, bitStream);
                     break;
                 default:
-                    logger.Error("Missing serialization implementation for a command.", ("command", commandType));
+                    logger.Error(Coherence.Log.Error.DefinitionMissingCommandImplementation, ("command", commandType));
                     break;
             }
         }
@@ -1120,7 +1120,7 @@ namespace Coherence.Generated
             switch (inputType)
             {
                 default:
-                    logger.Error("Missing serialization implementation for an input.", ("input", inputType));
+                    logger.Error(Coherence.Log.Error.DefinitionMissingInputImplementation, ("input", inputType));
                     break;
             }
         }
@@ -1252,7 +1252,6 @@ namespace Coherence.Generated
             }
         }
 }
-
 
 
 }
