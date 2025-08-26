@@ -22,7 +22,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE) && !UNITY_EDITOR
+#if (MICROSOFT_GDK_SUPPORT || MICROSOFT_GAME_CORE || UNITY_GAMECORE) && !UNITY_EDITOR
 #define BUILD_XBL_PLUGIN
 #endif
 
@@ -34,14 +34,19 @@ using PartyCSharpSDK;
 using PartyXBLCSharpSDK;
 using PlayFab.ClientModels;
 
-#if UNITY_GAMECORE
+#if !MICROSOFT_GDK_SUPPORT && (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
 using UnityEngine.GameCore;
-using Unity.GameCore;
-using XGR = Unity.GameCore;
+using XGR = UnityEngine.GameCore;
 #endif
+
 #if MICROSOFT_GAME_CORE
 using XGamingRuntime;
 using XGR = XGamingRuntime;
+#endif
+
+#if MICROSOFT_GDK_SUPPORT
+using Unity.XGamingRuntime;
+using XGR = Unity.XGamingRuntime;
 #endif
 
 #if BUILD_XBL_PLUGIN
@@ -153,9 +158,7 @@ namespace PlayFab.Party._Internal
             if (isLocal)
             {
                 ulong xuid;
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
                 if (HrSucceeded(XGR.SDK.XUserGetId(_xblLocalUserHandle, out xuid)))
-#endif
                 {
                     player._platformSpecificUserId = xuid.ToString();
                 }
@@ -265,9 +268,7 @@ namespace PlayFab.Party._Internal
 
             // Broadcast XUID to other endpoints in the network.
             ulong xuid;
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
             if (HrSucceeded(XGR.SDK.XUserGetId(_xblLocalUserHandle, out xuid)))
-#endif
             {
                 string xuidMessageString = _XUID_EXCHANGE_REQUEST_MESSAGE_PREFIX + ":" + xuid;
                 byte[] xuidMessageBytes = Encoding.ASCII.GetBytes(xuidMessageString);
@@ -330,7 +331,9 @@ namespace PlayFab.Party._Internal
                                 {
                                     string tokenRequestHeaderName = stateChangeConverted.headers[i].name;
                                     string tokenRequestHeaderValue = stateChangeConverted.headers[i].value;
-                                    tokenRequestHeaders[i] = new XUserGetTokenAndSignatureUtf16HttpHeader(tokenRequestHeaderName, tokenRequestHeaderValue);
+                                    tokenRequestHeaders[i] = new XUserGetTokenAndSignatureUtf16HttpHeader();
+                                    tokenRequestHeaders[i].Name = tokenRequestHeaderName;
+                                    tokenRequestHeaders[i].Value = tokenRequestHeaderValue;
                                 }
 
                                 var headers = tokenRequestHeaders;
@@ -343,7 +346,6 @@ namespace PlayFab.Party._Internal
                                 {
                                     body = null;
                                 }
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
                                 XGR.SDK.XUserGetTokenAndSignatureUtf16Async(
                                         _xblLocalUserHandle,
                                         options,
@@ -353,7 +355,6 @@ namespace PlayFab.Party._Internal
                                         body,
                                         trackableGetXTokenCompletedWrapper.CompleteGetXToken
                                         );
-#endif
                                 break;
                             }
                         case PARTY_XBL_STATE_CHANGE_TYPE.PARTY_XBL_STATE_CHANGE_TYPE_CREATE_LOCAL_CHAT_USER_COMPLETED:
@@ -519,9 +520,7 @@ namespace PlayFab.Party._Internal
 
             ulong xuid;
             int hr = 0;
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
             hr = XGR.SDK.XUserGetId(_xblLocalUserHandle, out xuid);
-#endif
 
             PlayFabMultiplayerManager._LogInfo("PlayFabChatXboxLivePolicyProvider:SignInSilentlyComplete(), XUID: " + xuid);
 
@@ -667,13 +666,11 @@ namespace PlayFab.Party._Internal
                 else if (hresult == _E_GAMEUSER_RESOLVE_USER_ISSUE_REQUIRED)
                 {
                     // We need to resolve
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE)
                     XGR.SDK.XUserResolveIssueWithUiUtf16Async(
                             Get()._xblLocalUserHandle,
                             url,
                             _ResolveUserIssueWithUICompleted
                         );
-#endif
                 }
                 else
                 {

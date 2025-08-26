@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Coherence.Log;
 using Coherence.Toolkit.Relay;
 using PartyCSharpSDK;
 using PlayFab.Party;
@@ -19,7 +18,6 @@ public class PlayFabRelay : IRelay
 
     public PlayFabRelay(PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS connectivityOptions)
     {
-        _logger = Log.GetLogger<PlayFabRelay>();
         _connectivityOptions = connectivityOptions;
     }
     
@@ -29,7 +27,7 @@ public class PlayFabRelay : IRelay
         
         if (_playFabMultiplayerManager.State != PlayFabMultiplayerManagerState.ConnectedToNetwork)
         {
-            _logger.Error("Must be connected to a PlayFab Network to open relay.");
+            Debug.LogError("Must be connected to a PlayFab Network to open relay.");
             return;
         }
 
@@ -46,7 +44,7 @@ public class PlayFabRelay : IRelay
 
         if (!_connectionMap.TryGetValue(from, out var relayConnection))
         {
-            _logger.Error($"{nameof(PlayFabRelay)} Failed to find client for connection.", ("Connection Id", from.EntityKey.Id));
+            Debug.LogError($"{nameof(PlayFabRelay)} Failed to find client for connection {from.EntityKey.Id}");
             return;
         }
 
@@ -67,7 +65,6 @@ public class PlayFabRelay : IRelay
     {
         if (!_connectionMap.TryGetValue(player, out var relayConnection))
         {
-            _logger.Error("Missing Relay Connection", ("Connection Id", player.EntityKey.Id));
             Debug.LogError($"Missing relay connection for {player.EntityKey}");
             return;
         }
@@ -81,7 +78,8 @@ public class PlayFabRelay : IRelay
         _playFabMultiplayerManager.OnRemotePlayerJoined -= OnRemotePlayerJoined;
         _playFabMultiplayerManager.OnRemotePlayerLeft -= OnRemotePlayerLeft;
         _playFabMultiplayerManager.OnDataMessageNoCopyReceived -= OnDataMessageNoCopyReceived;
-        _logger.Info("Leaving PlayFab Network", ("My Id", _playFabMultiplayerManager.LocalPlayer?.EntityKey?.Id ?? string.Empty));
+        var playerId = _playFabMultiplayerManager.LocalPlayer?.EntityKey?.Id ?? "unknown";
+        Debug.Log($"Player '{playerId}' Leaving PlayFab Network");
         _playFabMultiplayerManager.LeaveNetwork();
     }
     
