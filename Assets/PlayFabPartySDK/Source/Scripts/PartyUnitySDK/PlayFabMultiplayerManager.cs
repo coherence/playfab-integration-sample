@@ -22,7 +22,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#if (MICROSOFT_GAME_CORE || UNITY_GAMECORE) && !UNITY_EDITOR
+#if (MICROSOFT_GDK_SUPPORT || MICROSOFT_GAME_CORE || UNITY_GAMECORE) && !UNITY_EDITOR
 #define BUILD_XBL_PLUGIN
 #endif
 
@@ -487,7 +487,7 @@ namespace PlayFab.Party
         public void CreateAndJoinNetwork()
         {
             PlayFabNetworkConfiguration defaultNetworkConfiguration = new PlayFabNetworkConfiguration();
-            defaultNetworkConfiguration.MaxPlayerCount = PartyConstants.c_maxNetworkConfigurationMaxDeviceCount;
+            defaultNetworkConfiguration.MaxPlayerCount = PartyConstants.c_defaultNetworkConfigurationMaxDeviceCount;
             CreateAndJoinNetwork(defaultNetworkConfiguration);
         }
 
@@ -1350,7 +1350,7 @@ namespace PlayFab.Party
         {
             _LogInfo("PlayFabMultiplayerManager:SetUserSettings()");
 
-#if (UNITY_GAMECORE || MICROSOFT_GAME_CORE) && !UNITY_EDITOR
+#if (MICROSOFT_GDK_SUPPORT || MICROSOFT_GAME_CORE || UNITY_GAMECORE) && !UNITY_EDITOR
             if (string.IsNullOrEmpty(LocalPlayer.PlatformSpecificUserId))
             {
                 _platformPolicyProvider.CreateOrUpdatePlatformUser(LocalPlayer, true);

@@ -33,6 +33,7 @@ namespace PlayFab.Party
     {
         private uint _maxPlayerCount;
         const uint _MAX_SUPPORTED_PLAYER_COUNT = PartyConstants.c_maxNetworkConfigurationMaxDeviceCount;
+        const uint _DEFAULT_SUPPORTED_PLAYER_COUNT = PartyConstants.c_defaultNetworkConfigurationMaxDeviceCount;
 
         private PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS _directPeerConnectivityOptions;
 
@@ -40,7 +41,7 @@ namespace PlayFab.Party
 
         public PlayFabNetworkConfiguration()
         {
-            _maxPlayerCount = _MAX_SUPPORTED_PLAYER_COUNT;
+            _maxPlayerCount = _DEFAULT_SUPPORTED_PLAYER_COUNT;
             // default is P2P
             _directPeerConnectivityOptions = PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_PLATFORM_TYPE |
                                              PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS.PARTY_DIRECT_PEER_CONNECTIVITY_OPTIONS_ANY_ENTITY_LOGIN_PROVIDER;

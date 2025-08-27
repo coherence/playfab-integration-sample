@@ -5,7 +5,8 @@ namespace PartyCSharpSDK
     public class PartyConstants
     {
         // Party.h constants
-        public const Int32 c_maxNetworkConfigurationMaxDeviceCount = 32;
+        public const Int32 c_maxNetworkConfigurationMaxDeviceCount = 128;
+        public const Int32 c_defaultNetworkConfigurationMaxDeviceCount = 32;
         public const Int32 c_maxNetworkConfigurationMaxEndpointsPerDeviceCount = 32;
         public const Int32 c_maxLocalUsersPerDeviceCount = 8;
         public const Int32 c_opaqueConnectionInformationByteCount = 300;

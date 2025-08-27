@@ -9,6 +9,7 @@ using Coherence.Connection;
 using Coherence.Stats;
 using Coherence.Transport;
 using PlayFab.Party;
+using UnityEngine;
 using Logger = Coherence.Log.Logger;
 
 public class PlayFabTransport : ITransport
@@ -25,18 +26,16 @@ public class PlayFabTransport : ITransport
     private List<PlayFabPlayer> host;
     private string hostId;
     private string networkId;
-    private Logger _logger;
 
     private bool isClosing;
     
     private readonly Queue<byte[]> incomingPackets = new();
 
-    public PlayFabTransport(Logger logger, string networkId, string hostId)
+    public PlayFabTransport(string networkId, string hostId)
     {
         this.networkId = networkId;
         this.hostId = hostId;
         _playFabMultiplayerManager = PlayFabMultiplayerManager.Get();
-        _logger = logger.With<PlayFabTransport>();
     }
     
     public void Open(EndpointData _, ConnectionSettings __)
@@ -51,8 +50,6 @@ public class PlayFabTransport : ITransport
 
     private void OnNetworkJoined(object sender, string networkid)
     {
-        _logger.Info("Connected to network", ("Network Id", networkId), ("State", State), ("Network State", _playFabMultiplayerManager.State));
-
         if (State != TransportState.Open && host != null)
         {
             OpenNetwork();
@@ -61,20 +58,15 @@ public class PlayFabTransport : ITransport
 
     private void OnRemotePlayerJoined(object sender, PlayFabPlayer player)
     {
-        _logger.Info("Player Joined: Searching for host", ("Network Id", networkId), ("State", State),
-            ("Network State", _playFabMultiplayerManager.State), ("Host Id", hostId), ("Player Joined Id", player.EntityKey.Id));
-
-        if (!player.EntityKey.Id.Equals(hostId)) return;
-
-        _logger.Info("Found host", ("Network Id", networkId), ("State", State),
-            ("Network State", _playFabMultiplayerManager.State), ("Host Id", hostId));
+        if (!player.EntityKey.Id.Equals(hostId))
+            return;
 
         if (_playFabMultiplayerManager.State != PlayFabMultiplayerManagerState.ConnectedToNetwork)
         {
             return;
         }
         
-        host = new List<PlayFabPlayer>() { player };
+        host = new List<PlayFabPlayer> { player };
         OpenNetwork();
     }
 
@@ -86,7 +78,7 @@ public class PlayFabTransport : ITransport
 
     private void OnPlayFabError(object sender, PlayFabMultiplayerManagerErrorArgs args)
     {
-        _logger.Error("PlayFab Error", ("Message", args.Message));
+        Debug.LogError($"PlayFab Error: {args.Message}");
 
         if (!isClosing)
         {
@@ -105,7 +97,6 @@ public class PlayFabTransport : ITransport
     
     public void Close()
     {
-        _logger.Info("Leaving PlayFab network");
         _playFabMultiplayerManager.LeaveNetwork();
         _playFabMultiplayerManager.OnRemotePlayerJoined -= OnRemotePlayerJoined;
         _playFabMultiplayerManager.OnDataMessageNoCopyReceived -= OnDataMessageNoCopyReceived;
@@ -122,7 +113,7 @@ public class PlayFabTransport : ITransport
         
         if (!result)
         {
-            _logger.Error($"{nameof(PlayFabTransport)} failed to send PlayFab Party packet.");
+            Debug.LogError($"{nameof(PlayFabTransport)} failed to send PlayFab Party packet.");
         }
     }
 
@@ -149,7 +140,7 @@ public class PlayFabTransportFactory : ITransportFactory
     
     public ITransport Create(ushort mtu, IStats stats, Logger logger)
     {
-        return new PlayFabTransport(logger, networkId, host);
+        return new PlayFabTransport(networkId, host);
     }
     
     public PlayFabTransportFactory(string networkId, string host)
