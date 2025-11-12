@@ -16,6 +16,7 @@ public class PlayFabJoinHostUI : MonoBehaviour
     public GameObject InGameContainer;
     public TextMeshProUGUI InGameNetworkId;
     public TextMeshProUGUI InGameHostId;
+    public TextMeshProUGUI statusText;
     public Button CopyNetworkIdButton;
     public Button CopyHostIdButton;
 
@@ -41,12 +42,14 @@ public class PlayFabJoinHostUI : MonoBehaviour
 
         playFabManager.Connected += () =>
         {
+            statusText.text = "";
             PreGameContainer.SetActive(false);
             InGameContainer.SetActive(true);
         };
         
         playFabManager.Disconnected += () =>
         {
+            statusText.text = "Disconnected!";
             PreGameContainer.SetActive(true);
             InGameContainer.SetActive(false);
         };
