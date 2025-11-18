@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6403614821470421170}
   - component: {fileID: 7860318706385233898}
   - component: {fileID: 1308987771318311382}
+  - component: {fileID: 7973970718963096824}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -170,6 +171,8 @@ MonoBehaviour:
     - component: {fileID: 6403614821470421170}
       lodStepsActive: 1
     - component: {fileID: 7860318706385233898}
+      lodStepsActive: 1
+    - component: {fileID: 7973970718963096824}
       lodStepsActive: 1
     GeneratesArchetypeDefinition: 0
   interpolationLocation: 1
@@ -337,3 +340,16 @@ MonoBehaviour:
             Coherence.Toolkit, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         oldName: 
         oldParameterAssemblyTypes: []
+--- !u!114 &7973970718963096824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2788478255849533690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb0bdfb18c2540cda5a99f357a88379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1

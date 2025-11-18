@@ -175,12 +175,11 @@ namespace PlayFabSample
                 SignallingPort = 32002,
                 SendFrequency = 20,
                 ReceiveFrequency = 60,
-                Token = RuntimeSettings.Instance.ReplicationServerToken,
                 DisableThrottling = true,
                 AutoShutdownTimeout = 10000 // 10 seconds in milliseconds
             };
 
-            var consoleLogDir = Path.GetDirectoryName(Application.consoleLogPath);
+            var consoleLogDir = Path.GetDirectoryName(Application.consoleLogPath) ?? "";
             var logFilePath = Path.Combine(consoleLogDir, "coherence-server");
             replicationServer = Launcher.Create(config, $"--log-file \"{logFilePath}\"");
             replicationServer.OnLog += ReplicationServer_OnLog;

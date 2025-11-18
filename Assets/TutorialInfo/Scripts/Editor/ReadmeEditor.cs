@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
-using System;
 using System.IO;
 using System.Reflection;
 
@@ -81,7 +78,7 @@ public class ReadmeEditor : Editor
         {
             var readmeObject = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(ids[0]));
 
-            Selection.objects = new UnityEngine.Object[] { readmeObject };
+            Selection.objects = new [] { readmeObject };
 
             return (Readme)readmeObject;
         }
