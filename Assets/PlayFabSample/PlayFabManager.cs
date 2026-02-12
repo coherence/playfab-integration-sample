@@ -86,7 +86,7 @@ namespace PlayFabSample
             bridge.SetRelay(new PlayFabRelay(ConnectivityOptions));
 
             // Connect to Replication Server using the normal UDP transport
-            bridge.SetTransportType(TransportType.UDPWithTCPFallback, TransportConfiguration.Default);
+            bridge.SetTransportType(TransportType.UDPWithTCPFallback);
             bridge.Connect(endpointData, new ConnectionSettings()
             {
                 Mtu = 1384
@@ -126,8 +126,9 @@ namespace PlayFabSample
             };
 
             // Validate the endpoint
-            var (valid, error) = endpointData.Validate();
-            if (!valid)
+            var result = endpointData.ValidateLocalAddress();
+            var error = endpointData.GetErrorMessage(result);
+            if ((result & EndpointData.ValidationResult.ValidLocalEndpoint) != EndpointData.ValidationResult.ValidLocalEndpoint)
             {
                 throw new Exception($"Invalid {nameof(EndpointData)}: {error}");
             }
